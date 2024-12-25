@@ -1,44 +1,60 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
-// Create the context
 const AuthContext = createContext();
 
-// Custom hook to access the AuthContext
 export const useAuth = () => {
   return useContext(AuthContext);
 };
 
-// AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [role, setRole] = useState(null);
+  const [user, setUser] = useState({})
   const navigate = useNavigate();
 
-  // Check if the token exists in localStorage
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
-      setIsAuthenticated(true);
+      validateToken(token);
     }
   }, []);
 
-  // Function to log in the user
-  const login = (token) => {
-    localStorage.setItem('token', token);
+  const login = (token, user) => {
+    localStorage.setItem("token", token);
     setIsAuthenticated(true);
-    navigate('/');
+    setRole(user.role);
+    setUser({
+      username: user.username,
+      email: user.email
+    })
+    navigate("/");
   };
 
   // Function to log out the user
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setIsAuthenticated(false);
-    navigate('/login');
+    setRole(null);
+    navigate("/login");
+  };
+  const validateToken = (token) => {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+    const isTokenExpired = payload.exp * 1000 < Date.now();
+
+    if (isTokenExpired) {
+      logout(); 
+    } else {
+      setIsAuthenticated(true);
+      setRole(payload.role); // Set role from token payload
+    }
   };
 
   // Provide authentication state and functions to children components
   const value = {
     isAuthenticated,
+    role,
+    user,
     login,
     logout,
   };

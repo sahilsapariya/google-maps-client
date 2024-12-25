@@ -2,9 +2,12 @@ import React, { useState } from "react";
 
 import { usePost } from "../../hooks";
 import { baseurl } from "../../config/urls";
+import { useAuth } from "../../context/AuthContext";
 
 const Register = () => {
   const { loading, handlePost } = usePost();
+
+  const { login } = useAuth();
 
   const [formData, setFormData] = useState({
     role: "user",
@@ -21,20 +24,24 @@ const Register = () => {
     try {
       const res = await handlePost(`${baseurl}/auth/register`, formData);
 
-      console.log("res in register: ", res);      
-
       if (res && res.token) {
-        alert("Admin created successfully");
-        localStorage.setItem("token", res.token);
+        alert("User created successfully");
 
         formData.username = "";
         formData.email = "";
         formData.password = "";
+        formData.confirmPassword = "";
+
+        login(res.token, {
+          ...formData.username,
+          ...formData.email,
+          ...formData.role,
+        });
       } else {
         alert("No token returned");
       }
     } catch (error) {
-      alert("Error creating admin");
+      alert("Error creating user");
       console.log("error", error);
     }
   };
@@ -112,7 +119,7 @@ const Register = () => {
           </div>
 
           <button type="submit" disabled={loading ? true : false}>
-            Create Admin
+            Register
           </button>
         </form>
       </div>

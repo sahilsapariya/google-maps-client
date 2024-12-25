@@ -1,11 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { usePost } from "../../hooks";
 import { baseurl } from "../../config/urls";
 import { useAuth } from "../../context/AuthContext";
 
-
 const Login = () => {
+  const { logout } = useAuth();
+
+  useEffect(() => {
+    logout();
+  }, []);
+
   const { loading, handlePost } = usePost();
   const [formData, setFormData] = useState({});
 
@@ -18,16 +23,18 @@ const Login = () => {
     try {
       const res = await handlePost(`${baseurl}/auth/login`, formData);
 
-      console.log("res in register: ", res);      
-
       if (res && res.token) {
         alert("Logged in successfully");
 
         formData.email = "";
         formData.password = "";
-
-        login(res.token);
-
+        
+        const user = {
+          role: res.role,
+          username: res.username,
+          email: res.email,
+        }
+        login(res.token, user);
       } else {
         alert("No token returned");
       }
