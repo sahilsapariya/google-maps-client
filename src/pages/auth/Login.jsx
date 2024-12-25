@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { usePost } from "../../hooks";
 import { baseurl } from "../../config/urls";
+import { useAuth } from "../../context/AuthContext";
 
 
 const Login = () => {
   const { loading, handlePost } = usePost();
   const [formData, setFormData] = useState({});
-  const navigate = useNavigate();
+
+  const { login } = useAuth();
 
   // handle login function
   const handleLogin = async (e) => {
@@ -21,12 +22,12 @@ const Login = () => {
 
       if (res && res.token) {
         alert("Logged in successfully");
-        localStorage.setItem("token", res.token);
 
         formData.email = "";
         formData.password = "";
 
-        navigate("/map");
+        login(res.token);
+
       } else {
         alert("No token returned");
       }
