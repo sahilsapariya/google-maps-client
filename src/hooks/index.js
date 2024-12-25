@@ -1,4 +1,4 @@
-import useCreate from "./useCreate";
+import usePost from "./usePost";
 import useFetch from "./useFetch";
 
-export { useCreate, useFetch };
+export { usePost, useFetch };

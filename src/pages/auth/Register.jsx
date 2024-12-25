@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 
-import { useCreate } from "../../hooks";
+import { usePost } from "../../hooks";
 import { baseurl } from "../../config/urls";
 
 const Register = () => {
-  const { loading, handleCreate } = useCreate();
+  const { loading, handlePost } = usePost();
 
   const [formData, setFormData] = useState({
     role: "user",
@@ -19,7 +19,7 @@ const Register = () => {
       return;
     }
     try {
-      const res = await handleCreate(`${baseurl}/auth/register`, formData);
+      const res = await handlePost(`${baseurl}/auth/register`, formData);
 
       console.log("res in register: ", res);      
 

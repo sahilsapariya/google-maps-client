@@ -1,12 +1,12 @@
 import React from "react";
 import axios from "axios";
 
-const useCreate = () => {
+const usePost = () => {
   const [response, setResponse] = React.useState(null);
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(false);
 
-  const handleCreate = async (url, data, options = null) => {
+  const handlePost = async (url, data, options = null) => {
     setLoading(true);
     try {
       const res = await axios.post(url, data, {
@@ -22,8 +22,6 @@ const useCreate = () => {
         setError("No token found in the response.");
       }
 
-      console.log("res in use create: ", res);
-
       return res.data;
     } catch (err) {
       setError(err.response ? err.response.data : "An error occurred");
@@ -32,7 +30,7 @@ const useCreate = () => {
     }
   };
 
-  return { response, error, loading, handleCreate };
+  return { response, error, loading, handlePost };
 };
 
-export default useCreate;
+export default usePost;
